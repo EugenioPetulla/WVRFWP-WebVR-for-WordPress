@@ -28,6 +28,9 @@ if ( !defined( 'WPINC' ) ) {
 }
 
 class WVRFWP {
+
+	protected static $instance = null;
+
 	public function wvrfwp_embed_shortcode( $atts ) {
 			$atts = extract( shortcode_atts( array(
 				'type' => 'image',
@@ -37,13 +40,15 @@ class WVRFWP {
 			), $atts ) );
 
 			if (!empty($url)){
-				$html = '<a-scene>';
+
+				$html .= '<a-scene>';
 
 				if($type==='image'){
 			      $html .= '<a-sky src="' . $url . '" rotation="0 -130 0"></a-sky>';
 				}
 
 				$html .= '</a-scene>';
+			}
 
 			return $html;
 	}
@@ -51,7 +56,25 @@ class WVRFWP {
 	private function __construct() {
 			//add_action( 'wp_footer', array( $this, 'wvrfwp_aframe_js' ), 9999 );
 			wp_register_script( 'aframe', 'https://aframe.io/releases/0.3.0/aframe.min.js', array(), '0.3.0', true );
+			wp_enqueue_script( 'aframe' );
 			add_shortcode( 'vr-embed', array( $this, 'wvrfwp_embed_shortcode' ) );
 	}
 
+	/**
+	 * Return an instance of this class.
+	 *
+	 * @since     1.0.0
+	 *
+	 * @return    object    A single instance of this class.
+	 */
+	public static function get_instance() {
+		// If the single instance hasn't been set, set it now.
+		if ( null == self::$instance ) {
+			self::$instance = new self;
+		}
+		return self::$instance;
+	}
+
 }
+
+add_action( 'plugins_loaded', array( 'WVRFWP', 'get_instance' ), 9999 );
