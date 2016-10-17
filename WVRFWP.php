@@ -31,22 +31,71 @@ class WVRFWP {
 
 	protected static $instance = null;
 
+	/**
+	 * Return the style of the aframe.
+	 *
+	 * @since     1.0.0
+	 *
+	 * @return    string    CSS inline style.
+	 */
+	public function wvrfwp_style_params( $width, $height,  $margin, $align, $border, $border_width, $border_color ){
+		$style = '<style>
+					a-scene {
+						width: ' . $width . 'px;
+						height: ' . $height . 'px;
+						margin: ' . $margin . 'px;
+						max-width: 100%;
+						max-height: 1080px;';
+
+		if($align === 'left'){
+			$style .= 'float:left;';
+		}
+		if($align === 'right'){
+			$style .= 'float:right;';
+		}
+		if($align === 'center'){
+			$style .= 'float:none;
+					   margin: 0 auto;';
+		}
+		if($align === 'none'){
+			$style .= 'float:none;';
+		}
+
+		$style .= '}';
+
+		if($border === 'solid' || $border === 'dashed' || $border === 'dotted'){
+			$style .= 'a-scene canvas {
+				outline: ' . $border_width . 'px ' . $border . ' ' . $border_color . ';
+				}';
+		}
+		
+		$style .= '</style>';
+
+		return $style;
+	}
+
+	/**
+	 * Return HTML for image VR rendering via a-frame.
+	 *
+	 * @since     1.0.0
+	 *
+	 * @return    string    HTML Structure for a-frame.
+	 */
 	public function wvrfwp_image_embed_shortcode( $atts ) {
 			$atts = extract( shortcode_atts( array(
 				'width' => '300',
 				'height' => '300',
+				'margin' => '10',
+				'align' => 'left',
+				'border' => '',
+				'border_width' => '4',
+				'border_color' => '333333',
 				'url' => '',
 			), $atts ) );
 
 			if (!empty($url)){
-				$html = '<style>
-							a-scene {
-								width: ' . $width . 'px;
-								height: ' . $height . 'px;
-								max-width: 100%;
-								max-height: 1080px;
-							}
-						</style>';
+
+				$html = $this->wvrfwp_style_params($width, $height,  $margin, $align, $border, $border_width, $border_color);
 
 				$html .= '<a-scene embedded><a-sky src="' . $url . '" rotation="0 -130 0"></a-sky></a-scene>';
 
@@ -55,22 +104,28 @@ class WVRFWP {
 			return $html;
 	}
 
+	/**
+	 * Return HTML for video VR rendering via a-frame.
+	 *
+	 * @since     1.0.0
+	 *
+	 * @return    string    HTML Structure for a-frame.
+	 */
 	public function wvrfwp_video_embed_shortcode( $atts ) {
 			$atts = extract( shortcode_atts( array(
 				'width' => '300',
 				'height' => '300',
+				'margin' => '10',
+				'align' => 'left',
+				'border' => '',
+				'border_width' => '4',
+				'border_color' => '333333',
 				'url' => '',
 			), $atts ) );
 
 			if (!empty($url)){
-				$html = '<style>
-							a-scene {
-								width: ' . $width . 'px;
-								height: ' . $height . 'px;
-								max-width: 100%;
-								max-height: 1080px;
-							}
-						</style>';
+
+				$html = $this->wvrfwp_style_params($width, $height,  $margin, $align, $border, $border_width, $border_color);
 
 				$html .= '<a-scene embedded>
 						      <a-assets>
@@ -83,6 +138,11 @@ class WVRFWP {
 			return $html;
 	}
 
+	/**
+	 * Initialize the plugin and enqueue scripts.
+	 *
+	 * @since     1.0.0
+	 */
 	private function __construct() {
 			//add_action( 'wp_footer', array( $this, 'wvrfwp_aframe_js' ), 9999 );
 			wp_register_script( 'aframe', 'https://aframe.io/releases/0.3.0/aframe.min.js', array(), '0.3.0', true );
