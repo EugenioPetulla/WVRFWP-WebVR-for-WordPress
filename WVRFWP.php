@@ -31,9 +31,8 @@ class WVRFWP {
 
 	protected static $instance = null;
 
-	public function wvrfwp_embed_shortcode( $atts ) {
+	public function wvrfwp_image_embed_shortcode( $atts ) {
 			$atts = extract( shortcode_atts( array(
-				'type' => 'image',
 				'width' => '300',
 				'height' => '300',
 				'url' => '',
@@ -49,13 +48,36 @@ class WVRFWP {
 							}
 						</style>';
 
-				$html .= '<a-scene embedded>';
+				$html .= '<a-scene embedded><a-sky src="' . $url . '" rotation="0 -130 0"></a-sky></a-scene>';
 
-				if($type==='image'){
-			      $html .= '<a-sky src="' . $url . '" rotation="0 -130 0"></a-sky>';
-				}
+			}
 
-				$html .= '</a-scene>';
+			return $html;
+	}
+
+	public function wvrfwp_video_embed_shortcode( $atts ) {
+			$atts = extract( shortcode_atts( array(
+				'width' => '300',
+				'height' => '300',
+				'url' => '',
+			), $atts ) );
+
+			if (!empty($url)){
+				$html = '<style>
+							a-scene {
+								width: ' . $width . 'px;
+								height: ' . $height . 'px;
+								max-width: 100%;
+								max-height: 1080px;
+							}
+						</style>';
+
+				$html .= '<a-scene embedded>
+						      <a-assets>
+						        <video id="video" src="' . $url . '" autoplay loop crossorigin></video>
+						      </a-assets>
+						      <a-videosphere src="#video" rotation="0 180 0"></a-videosphere>
+						</a-scene>';
 			}
 
 			return $html;
@@ -65,7 +87,8 @@ class WVRFWP {
 			//add_action( 'wp_footer', array( $this, 'wvrfwp_aframe_js' ), 9999 );
 			wp_register_script( 'aframe', 'https://aframe.io/releases/0.3.0/aframe.min.js', array(), '0.3.0', true );
 			wp_enqueue_script( 'aframe' );
-			add_shortcode( 'vr-embed', array( $this, 'wvrfwp_embed_shortcode' ) );
+			add_shortcode( 'vr-image', array( $this, 'wvrfwp_image_embed_shortcode' ) );
+			add_shortcode( 'vr-video', array( $this, 'wvrfwp_video_embed_shortcode' ) );
 	}
 
 	/**
