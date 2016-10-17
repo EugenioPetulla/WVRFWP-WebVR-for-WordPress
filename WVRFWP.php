@@ -40,8 +40,16 @@ class WVRFWP {
 			), $atts ) );
 
 			if (!empty($url)){
+				$html = '<style>
+							a-scene {
+								width: ' . $width . 'px;
+								height: ' . $height . 'px;
+								max-width: 100%;
+								max-height: 1080px;
+							}
+						</style>';
 
-				$html .= '<a-scene>';
+				$html .= '<a-scene embedded>';
 
 				if($type==='image'){
 			      $html .= '<a-sky src="' . $url . '" rotation="0 -130 0"></a-sky>';
