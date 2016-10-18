@@ -93,7 +93,7 @@ class WVRFWP {
 				'url' => '',
 			), $atts ) );
 
-			if (!empty($url)){
+			if (!empty($url) && is_singular()){
 
 				$html = $this->wvrfwp_style_params($width, $height,  $margin, $align, $border, $border_width, $border_color);
 
@@ -123,7 +123,7 @@ class WVRFWP {
 				'url' => '',
 			), $atts ) );
 
-			if (!empty($url)){
+			if (!empty($url) && is_singular()){
 
 				$html = $this->wvrfwp_style_params($width, $height,  $margin, $align, $border, $border_width, $border_color);
 
